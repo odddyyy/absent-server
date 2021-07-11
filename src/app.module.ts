@@ -14,6 +14,7 @@ import { JwtStrategy } from './shared/strategies/jwt.strategy';
 import { JWT_CONSTANT } from './shared/constants/env.constant';
 import { AdminController } from './controllers/admin.controller';
 import { AdminService } from './services/admin.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AdminService } from './services/admin.service';
     CacheModule.register(),
   ],
   controllers: [
+    AppController,
     AdminController,
     AuthController,
     DataController,
