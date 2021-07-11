@@ -20,7 +20,7 @@ export class TaskService {
         response.data = result;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -40,7 +40,7 @@ export class TaskService {
         response.data = task;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -66,7 +66,7 @@ export class TaskService {
         response.data = newTask;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -88,7 +88,7 @@ export class TaskService {
         response.data = task;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -105,7 +105,7 @@ export class TaskService {
         response.message = 'task deleted';
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
   }
 }

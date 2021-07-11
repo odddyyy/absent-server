@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Req,
@@ -15,6 +16,13 @@ import { AdminService } from 'src/services/admin.service';
 @UseGuards(AuthGuard('jwt'))
 export class AdminController {
   constructor(private readonly adminService: AdminService) {}
+
+  @Get('/get-employees')
+  findAllEmployeeByCompanyId(@Req() request: any) {
+    return this.adminService.findAllEmployeeByCompanyId(
+      request.user.company_id
+    );
+  }
 
   @Post('/register-employee')
   createNewEmployee(@Body() payload: any, @Req() request: any) {

@@ -1,8 +1,7 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Employee } from 'src/libs/entities/employee.entity';
-import { EmployeeDTO } from 'src/libs/interfaces/employee.dto';
 import { generalResponse } from 'src/shared/responseVM/general-responseVM';
-import { EntityManager, getConnection } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { HttpException } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import * as bcrypt from 'bcrypt';
@@ -11,11 +10,14 @@ import * as bcrypt from 'bcrypt';
 export class EmployeeService {
   constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
 
-  async findAllEmployee(): Promise<generalResponse> {
+  async findAllEmployeeByCompanyId(
+    company_id: number
+  ): Promise<generalResponse> {
     const result = new generalResponse();
     await getConnection()
       .transaction(async (transaction) => {
         const employees = await transaction.find(Employee, {
+          where: { company: company_id },
           select: ['employee_id', 'username', 'fullname', 'position'],
         });
         result.status = 'ok';
@@ -23,7 +25,7 @@ export class EmployeeService {
         result.data = employees;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return result;
   }
@@ -37,12 +39,13 @@ export class EmployeeService {
           select: ['employee_id', 'fullname', 'username', 'position'],
           relations: ['absent_record', 'role', 'task'],
         });
+        if (!employee) throw new HttpException('not found', 404);
         response.status = 'ok';
         response.message = 'success';
         response.data = employee;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -53,6 +56,7 @@ export class EmployeeService {
       const oldData = await transaction.findOne(Employee, {
         where: { employee_id },
       });
+      if (!oldData) throw new HttpException('not found', 404);
       await transaction.save(Employee, {
         ...oldData,
         ...payload,
@@ -70,6 +74,7 @@ export class EmployeeService {
       const oldData = await transaction.findOne(Employee, {
         where: { employee_id },
       });
+      if (!oldData) throw new HttpException('not found', 404);
       if (!(await bcrypt.compare(old_password, oldData.password))) {
         throw new HttpException('invalid password', 400);
       }

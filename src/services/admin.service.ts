@@ -8,6 +8,26 @@ import { ADMIN } from 'src/shared/constants/role.constant';
 
 @Injectable()
 export class AdminService {
+  async findAllEmployeeByCompanyId(
+    company_id: number
+  ): Promise<generalResponse> {
+    const result = new generalResponse();
+    await getConnection()
+      .transaction(async (transaction) => {
+        const employees = await transaction.find(Employee, {
+          where: { company: company_id },
+          select: ['employee_id', 'username', 'fullname', 'position'],
+        });
+        result.status = 'ok';
+        result.message = 'success';
+        result.data = employees;
+      })
+      .catch((err) => {
+        throw new HttpException(err, err.status || 500);
+      });
+    return result;
+  }
+
   async registerEmployee(
     payload: EmployeeDTO,
     user: any
@@ -18,7 +38,7 @@ export class AdminService {
     await getConnection()
       .transaction(async (transaction) => {
         if (!ADMIN.includes(role_name)) {
-          throw new HttpException('Unauthorized', 404);
+          throw new HttpException('Unauthorized', 401);
         }
         const exist = await transaction.findOne(Employee, {
           where: { username },
@@ -42,7 +62,8 @@ export class AdminService {
         response.message = 'new employee created';
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        console.log(err);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -64,7 +85,7 @@ export class AdminService {
         response.message = 'employee deleted';
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }

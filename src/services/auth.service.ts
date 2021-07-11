@@ -33,7 +33,7 @@ export class AuthService {
         };
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return result;
   }

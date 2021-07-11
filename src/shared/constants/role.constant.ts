@@ -1,2 +1,2 @@
-export const ADMIN = ['super admin', 'admin'];
-export const ROOT = ['super admin'];
+export const ADMIN = ['root admin', 'company admin'];
+export const ROOT = ['root admin'];

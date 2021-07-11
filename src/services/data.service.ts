@@ -30,7 +30,7 @@ export class DataService {
           response.message = 'new role created';
         })
         .catch((err) => {
-          throw new HttpException(err, 500);
+          throw new HttpException(err, err.status || 500);
         });
     }
     return response;
@@ -61,7 +61,7 @@ export class DataService {
         response.message = 'new role created';
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
