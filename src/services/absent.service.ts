@@ -25,7 +25,7 @@ export class AbsentService {
         response.data = newAbsent;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -49,7 +49,7 @@ export class AbsentService {
         response.data = absent;
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
@@ -65,7 +65,7 @@ export class AbsentService {
         response.message = 'absent deleted';
       })
       .catch((err) => {
-        throw new HttpException(err, 500);
+        throw new HttpException(err, err.status || 500);
       });
     return response;
   }
